@@ -1,8 +1,9 @@
 package struct
 
-class Plane private (val normal: Vector3, val w: Float) {
+import raytracer.{RayHit, RayIntersectable}
 
-
+class Plane protected (val normal: Vector3, val w: Float) extends RayIntersectable{
+  override def intersects(ray: Ray): RayHit = ray.intersectsPlane(this)
 }
 
 object Plane {

@@ -1,6 +1,8 @@
 package struct
 
-class Color private(red: Int, green: Int, blue: Int) {
+import raytracer.Colored
+
+class Color private(val red: Int, val green: Int, val blue: Int) {
   require(red >= 0 && red <= 255, s"Red component is out of range: $red")
   require(green >= 0 && green <= 255, s"Green component is out of range: $green")
   require(blue >= 0 && blue <= 255, s"Blue component is out of range: $blue")
@@ -20,7 +22,6 @@ class Color private(red: Int, green: Int, blue: Int) {
   /*  println(redByte & 0xff)
     println(greenByte & 0xff)
     println(blueByte & 0xff)*/
-
 }
 
 object Color {

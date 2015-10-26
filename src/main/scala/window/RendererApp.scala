@@ -15,13 +15,14 @@ import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.canvas.Canvas
 import scalafx.scene.{Group, Scene}
 
-object Main extends JFXApp {
+object RendererApp extends JFXApp {
   val width = Config().getInt("width")
   val height = Config().getInt("height")
 
 
   val canvas = new Canvas(width, height)
   val graphicsContext: GraphicsContext = canvas.getGraphicsContext2D
+
   val camera = Config.camera
 
   var renderer = new Renderer(width, height, graphicsContext)
@@ -39,8 +40,8 @@ object Main extends JFXApp {
   val group = new Group(canvas)
 
   stage = new PrimaryStage {
-    width = Main.this.width + 15
-    height = Main.this.height + 37
+    width = RendererApp.this.width + 15
+    height = RendererApp.this.height + 37
     scene = new Scene {
       root = group
     }

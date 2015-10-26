@@ -3,7 +3,8 @@ package common
 import java.nio.file.{Paths, Files}
 
 import com.typesafe.config.ConfigFactory
-import struct.{Vector3, Camera}
+import renderer.Camera
+import struct.Vector3
 
 object Config {
 

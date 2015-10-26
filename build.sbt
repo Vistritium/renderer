@@ -4,9 +4,9 @@ version := "1.0"
 
 scalaVersion := "2.11.7"
 
-mainClass in (Compile,run) := Some("window.Main")
+mainClass in (Compile,run) := Some("window.RendererApp")
 
-mainClass in assembly := Some("window.Main")
+mainClass in assembly := Some("window.RendererApp")
 
 libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.3.10"
 

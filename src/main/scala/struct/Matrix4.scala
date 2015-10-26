@@ -12,51 +12,51 @@ case class Matrix4(_1: (Float, Float, Float, Float),
     (_1._4, _2._4, _3._4, _4._4))
 
   def apply(i: Int) = {
-    if( i == 0){
+    if (i == 0) {
       _1._1
-    } else if( i == 1 ){
+    } else if (i == 1) {
       _1._2
     }
-    else if( i == 2 ){
+    else if (i == 2) {
       _1._3
     }
-    else if( i == 3 ){
+    else if (i == 3) {
       _1._4
     }
-    else if( i == 4 ){
+    else if (i == 4) {
       _2._1
     }
-    else if( i == 5 ){
+    else if (i == 5) {
       _2._2
     }
-    else if( i == 6 ){
+    else if (i == 6) {
       _2._3
     }
-    else if( i == 7 ){
+    else if (i == 7) {
       _2._4
     }
-    else if( i == 8 ){
+    else if (i == 8) {
       _3._1
     }
-    else if( i == 9 ){
+    else if (i == 9) {
       _3._2
     }
-    else if( i == 10 ){
+    else if (i == 10) {
       _3._3
     }
-    else if( i == 11 ){
+    else if (i == 11) {
       _3._4
     }
-    else if( i == 12 ){
+    else if (i == 12) {
       _4._1
     }
-    else if( i == 13 ){
+    else if (i == 13) {
       _4._2
     }
-    else if( i == 14 ){
+    else if (i == 14) {
       _4._3
     }
-    else if( i == 15 ){
+    else if (i == 15) {
       _4._4
     } else {
       throw new IllegalArgumentException(s"Illegal number. Must be between 0 and 15, actual:$i")
@@ -99,6 +99,143 @@ case class Matrix4(_1: (Float, Float, Float, Float),
       s"${_2._1} ${_2._2} ${_2._3} ${_2._4}\n" +
       s"${_3._1} ${_3._2} ${_3._3} ${_3._4}\n" +
       s"${_4._1} ${_4._2} ${_4._3} ${_4._4}\n"
+
+
+  def invert(): Matrix4 = {
+
+    val m = this
+    val inv = Array.ofDim[Float](16)
+
+    val i = 0
+
+    inv.update(0, m(5) * m(10) * m(15) -
+      m(5) * m(11) * m(14) -
+      m(9) * m(6) * m(15) +
+      m(9) * m(7) * m(14) +
+      m(13) * m(6) * m(11) -
+      m(13) * m(7) * m(10))
+
+    inv.update(4, -m(4) * m(10) * m(15) +
+      m(4) * m(11) * m(14) +
+      m(8) * m(6) * m(15) -
+      m(8) * m(7) * m(14) -
+      m(12) * m(6) * m(11) +
+      m(12) * m(7) * m(10))
+
+    inv.update(8, m(4) * m(9) * m(15) -
+      m(4) * m(11) * m(13) -
+      m(8) * m(5) * m(15) +
+      m(8) * m(7) * m(13) +
+      m(12) * m(5) * m(11) -
+      m(12) * m(7) * m(9))
+
+    inv.update(12, -m(4) * m(9) * m(14) +
+      m(4) * m(10) * m(13) +
+      m(8) * m(5) * m(14) -
+      m(8) * m(6) * m(13) -
+      m(12) * m(5) * m(10) +
+      m(12) * m(6) * m(9))
+
+    inv.update(1, -m(1) * m(10) * m(15) +
+      m(1) * m(11) * m(14) +
+      m(9) * m(2) * m(15) -
+      m(9) * m(3) * m(14) -
+      m(13) * m(2) * m(11) +
+      m(13) * m(3) * m(10))
+
+    inv.update(5, m(0) * m(10) * m(15) -
+      m(0) * m(11) * m(14) -
+      m(8) * m(2) * m(15) +
+      m(8) * m(3) * m(14) +
+      m(12) * m(2) * m(11) -
+      m(12) * m(3) * m(10))
+
+    inv.update(9, -m(0) * m(9) * m(15) +
+      m(0) * m(11) * m(13) +
+      m(8) * m(1) * m(15) -
+      m(8) * m(3) * m(13) -
+      m(12) * m(1) * m(11) +
+      m(12) * m(3) * m(9))
+
+    inv.update(13, m(0) * m(9) * m(14) -
+      m(0) * m(10) * m(13) -
+      m(8) * m(1) * m(14) +
+      m(8) * m(2) * m(13) +
+      m(12) * m(1) * m(10) -
+      m(12) * m(2) * m(9))
+
+    inv.update(2, m(1) * m(6) * m(15) -
+      m(1) * m(7) * m(14) -
+      m(5) * m(2) * m(15) +
+      m(5) * m(3) * m(14) +
+      m(13) * m(2) * m(7) -
+      m(13) * m(3) * m(6))
+
+    inv.update(6, -m(0) * m(6) * m(15) +
+      m(0) * m(7) * m(14) +
+      m(4) * m(2) * m(15) -
+      m(4) * m(3) * m(14) -
+      m(12) * m(2) * m(7) +
+      m(12) * m(3) * m(6))
+
+    inv.update(10, m(0) * m(5) * m(15) -
+      m(0) * m(7) * m(13) -
+      m(4) * m(1) * m(15) +
+      m(4) * m(3) * m(13) +
+      m(12) * m(1) * m(7) -
+      m(12) * m(3) * m(5))
+
+    inv.update(14, -m(0) * m(5) * m(14) +
+      m(0) * m(6) * m(13) +
+      m(4) * m(1) * m(14) -
+      m(4) * m(2) * m(13) -
+      m(12) * m(1) * m(6) +
+      m(12) * m(2) * m(5))
+
+    inv.update(3, -m(1) * m(6) * m(11) +
+      m(1) * m(7) * m(10) +
+      m(5) * m(2) * m(11) -
+      m(5) * m(3) * m(10) -
+      m(9) * m(2) * m(7) +
+      m(9) * m(3) * m(6))
+
+    inv.update(7, m(0) * m(6) * m(11) -
+      m(0) * m(7) * m(10) -
+      m(4) * m(2) * m(11) +
+      m(4) * m(3) * m(10) +
+      m(8) * m(2) * m(7) -
+      m(8) * m(3) * m(6))
+
+    inv.update(11, -m(0) * m(5) * m(11) +
+      m(0) * m(7) * m(9) +
+      m(4) * m(1) * m(11) -
+      m(4) * m(3) * m(9) -
+      m(8) * m(1) * m(7) +
+      m(8) * m(3) * m(5))
+
+    inv.update(15, m(0) * m(5) * m(10) -
+      m(0) * m(6) * m(9) -
+      m(4) * m(1) * m(10) +
+      m(4) * m(2) * m(9) +
+      m(8) * m(1) * m(6) -
+      m(8) * m(2) * m(5))
+
+    val det = m(0) * inv(0) + m(1) * inv(4) + m(2) * inv(8) + m(3) * inv(12);
+
+    if (det == 0.0f)
+      throw new IllegalArgumentException("Can't be inversed")
+
+    val dett = 1.0f / det;
+
+    // @formatter:off
+    Matrix4(
+      (m(0), m(1), m(2), m(3)),
+      (m(4), m(5), m(6), m(7)),
+      (m(8), m(9), m(10), m(11)),
+      (m(12), m(13), m(14), m(15)))
+    // @formatter:on
+  }
+
 }
 
 object Matrix4 {
@@ -172,23 +309,24 @@ object Matrix4 {
     buf
   }
 
+
   // @formatter:off
-/*  def rotationYawPitchRoll(yaw: Float, pitch: Float, roll: Float) = {
-    val a = yaw
-    val b = pitch
-    val y = roll
+  /*  def rotationYawPitchRoll(yaw: Float, pitch: Float, roll: Float) = {
+      val a = yaw
+      val b = pitch
+      val y = roll
 
-    //rotaX(yaw) * rotaY(pitch) * rotaZ(roll)
+      //rotaX(yaw) * rotaY(pitch) * rotaZ(roll)
 
-    Matrix4(
-      (cos(a)*cos(b)                          , sin(a)*cos(b)                                         , -sin(b)                               , 0),
-      (cos(a)*sin(b)*sin(y) - sin(a)*cos(y)   , sin(a)*sin(b)*sin(y) + cos(a)*cos(y)                  , cos(b)*sin(y)                         , 0),
-      (cos(a)*sin(b)*cos(y) + sin(a) * sin(y) , sin(a)*sin(b)*cos(y) - cos(a)*sin(y)                  , cos(b)*cos(y)                         , 0),
-      (0                                      ,0                                                      ,0                                      , 1)
-    )
+      Matrix4(
+        (cos(a)*cos(b)                          , sin(a)*cos(b)                                         , -sin(b)                               , 0),
+        (cos(a)*sin(b)*sin(y) - sin(a)*cos(y)   , sin(a)*sin(b)*sin(y) + cos(a)*cos(y)                  , cos(b)*sin(y)                         , 0),
+        (cos(a)*sin(b)*cos(y) + sin(a) * sin(y) , sin(a)*sin(b)*cos(y) - cos(a)*sin(y)                  , cos(b)*cos(y)                         , 0),
+        (0                                      ,0                                                      ,0                                      , 1)
+      )
 
-  }*/
-// @formatter:on
+    }*/
+  // @formatter:on
 
   //can be optimized: http://www.3dgep.com/understanding-the-view-matrix/
   /*  def lookAtRH(from: Vector3, target: Vector3, up: Vector3): Matrix4 = {
@@ -212,7 +350,7 @@ object Matrix4 {
 
       orientation * translation
     }*/
-// @formatter:on
+  // @formatter:on
   def lookAtLHT(eye: Vector3, target: Vector3, up: Vector3): Matrix4 = {
 
     val zaxis = (target - eye).normalised
@@ -277,10 +415,10 @@ object Matrix4 {
     result(14) = (znear * zfar) / (znear - zfar)
     // @formatter:off
     Matrix4(
-      (result(0),   result(1),  result(2),  result(3)),
-      (result(4),   result(5),  result(6),  result(7)),
-      (result(8),   result(9),  result(10),  result(11)),
-      (result(12),  result(13), result(14), result(15)))
+      (result(0), result(1), result(2), result(3)),
+      (result(4), result(5), result(6), result(7)),
+      (result(8), result(9), result(10), result(11)),
+      (result(12), result(13), result(14), result(15)))
     // @formatter:on
   }
 
