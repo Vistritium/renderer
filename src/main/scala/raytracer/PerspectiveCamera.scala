@@ -1,11 +1,14 @@
 package raytracer
 
+import common.ProgressCounter
 import struct.{Color, FloatUtils, Ray, Vector3}
 
 class PerspectiveCamera(override var position: Vector3, override var target: Vector3, centerDistance: Float, override var width: Int, override var height: Int, antyaliasing: Antyaliasing = new RegularAntyaliasing(4)) extends Camera {
   val direction = (target - position).normalised
 
   override protected def draw(world: World): Unit = {
+
+
 
     val e = position + direction * centerDistance
 
@@ -37,6 +40,7 @@ class PerspectiveCamera(override var position: Vector3, override var target: Vec
 
     }
 
+    val progress = new ProgressCounter(width * height)
     (0 until width).par.foreach(i => {
       (0 until height).foreach(j => {
 
@@ -45,14 +49,12 @@ class PerspectiveCamera(override var position: Vector3, override var target: Vec
 
         val point = e + cameraUHalfPixels * iFactor + cameraVHalfPixels * jFactor
 
-        // val ray = Ray(position, (point - position).normalised)
-
         val maybeColor = middleRay(point)
 
         if (maybeColor.isDefined) {
           putPixel(i, j, maybeColor.get)
         }
-
+        progress.bumpAndMaybePrintProgress()
       })
     })
   }

@@ -71,7 +71,7 @@ class Vector3(private var _x: Float, private var _y: Float, private var _z: Floa
 
   def normalised = if(magnitude != 0) this / magnitude else this
 
-  def dot(v: Vector3) = x * v.x + y * v.y + z * v.z
+  def dot(v: Vector3): Float = x * v.x + y * v.y + z * v.z
 
   def project(v: Vector3) = {
     val axis = v.normalised

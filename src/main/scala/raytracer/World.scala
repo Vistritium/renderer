@@ -4,15 +4,13 @@ import struct.{Ray, Sphere}
 
 import scala.collection.mutable.ArrayBuffer
 
-class World {
+class World extends RayIntersectable {
 
   var objects = ArrayBuffer[RayIntersectable with Colored]()
-
 
   def intersects(ray: Ray): RayHit = {
     objects.map(_.intersects(ray)).reduce(compareRayHits)
   }
-
 
   private def compareRayHits(left: RayHit, right: RayHit): RayHit = {
     if (left.hit.isDefined && right.hit.isDefined) {
@@ -34,6 +32,14 @@ object World {
   def apply(spheres: RayIntersectable with Colored *): World = {
     val world = new World()
     world.objects ++= spheres
+
+    world
+  }
+
+  def fromMeshes(mesh: Mesh *): World = {
+    val world = new World()
+    val triangles = mesh.flatMap(_.faces)
+    world.objects ++= triangles
 
     world
   }

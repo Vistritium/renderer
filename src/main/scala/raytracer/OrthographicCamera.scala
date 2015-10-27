@@ -40,8 +40,8 @@ class OrthographicCamera(override var position: Vector3, override var target: Ve
 
     }
 
-    (0 until width).foreach(i => {
-      (0 until height).foreach(j => {
+    (0 until width).par.foreach(i => {
+      (0 until height).par.foreach(j => {
         val iFactor = FloatUtils.lerp(-1f, 1f, i.toFloat / width)
         val jFactor = FloatUtils.lerp(-1f, 1f, j.toFloat / height)
 

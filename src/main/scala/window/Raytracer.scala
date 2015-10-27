@@ -10,6 +10,7 @@ import com.typesafe.config.ConfigFactory
 import common.Config
 import raytracer._
 import struct._
+import window.RendererApp._
 
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.{JFXApp, Platform}
@@ -20,6 +21,8 @@ object Raytracer extends JFXApp {
 
   val conf = ConfigFactory.parseResources("raytracer.conf")
 
+  val model = BabylonImporter.importModel(getClass.getClassLoader.getResourceAsStream("models/monkey.babylon"))
+
   val width = conf.getInt("width")
   val height = conf.getInt("height")
 
@@ -28,10 +31,19 @@ object Raytracer extends JFXApp {
 
   val fpsCounter = new FPSCOunter
 
-  val world = World(
-    new ColoredSphere(new Vector3(0, 0, 1), 0.4f, Color(0, 0, 255)),
-    new ColoredSphere(new Vector3(0.4f, 0, 1.1f), 0.3f, Color(255, 0, 0)),
-    ColoredPlane(new Vector3(0, 0, -1), 2, Color(0, 255, 0)))
+  /*  val world = World(
+      new ColoredSphere(new Vector3(0, 0, 1), 0.4f, Color(0, 0, 255)),
+      new ColoredSphere(new Vector3(0.4f, 0, 1.1f), 0.3f, Color(255, 0, 0)),
+      ColoredPlane.fromPoints(new Vector3(0, 0, 2), new Vector3(2, 0, 2), new Vector3(0, 2, 2), Color(0, 255, 0)))*/
+
+
+  private val triangleVal = 0.5f
+/*  val world = World(
+    ColoredTriangle(new Vector3(-triangleVal, -triangleVal, 2), new Vector3(-triangleVal, triangleVal, 2), new Vector3(triangleVal, 0, 2), Color(255, 255, 0)),
+    ColoredPlane.fromPoints(new Vector3(0, 2, 3), new Vector3(2, 0, 3), new Vector3(0, 0, 3), Color(0, 255, 0))
+  )*/
+
+  val world = World.fromMeshes(model:_*)
 
   val cameraPos = new Vector3(conf.getDouble("camera.pos.x").toFloat, conf.getDouble("camera.pos.y").toFloat, conf.getDouble("camera.pos.z").toFloat)
   val cameraTarget = new Vector3(conf.getDouble("camera.target.x").toFloat, conf.getDouble("camera.target.y").toFloat, conf.getDouble("camera.target.z").toFloat)
