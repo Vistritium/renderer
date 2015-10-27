@@ -2,16 +2,14 @@ package raytracer
 
 import struct.{Color, FloatUtils, Ray, Vector3}
 
-class OrthographicCamera(position: Vector3, direction: Vector3, override var width: Int, override var height: Int, antyaliasing: Antyaliasing = new RegularAntyaliasing(2)) extends Camera {
+class OrthographicCamera(override var position: Vector3, override var target: Vector3, override var width: Int, override var height: Int, antyaliasing: Antyaliasing = new RegularAntyaliasing(2)) extends Camera {
+  val direction = (target - position).normalised
 
   override protected def draw(world: World): Unit = {
 
     val cameraW = direction.normalised
     val cameraU = (Vector3.up cross cameraW).normalised
-    val cameraV = (cameraW cross cameraU).normalised
-
-    val pixelWidth = 2.0f / width
-    val pixelHeight = 2.0f / height
+    val cameraV = -(cameraW cross cameraU).normalised
 
     val cameraUSinglePixel = cameraU * pixelWidth
     val cameraVSinglePixel = cameraV * pixelHeight
@@ -42,11 +40,8 @@ class OrthographicCamera(position: Vector3, direction: Vector3, override var wid
 
     }
 
-    var i = 0
-    while (i < width) {
-      var j = 0
-      while (j < height) {
-
+    (0 until width).foreach(i => {
+      (0 until height).foreach(j => {
         val iFactor = FloatUtils.lerp(-1f, 1f, i.toFloat / width)
         val jFactor = FloatUtils.lerp(-1f, 1f, j.toFloat / height)
 
@@ -59,11 +54,20 @@ class OrthographicCamera(position: Vector3, direction: Vector3, override var wid
         if (color.isDefined) {
           putPixel(i, j, color.get)
         }
+      })
+    })
+
+/*    var i = 0
+    while (i < width) {
+      var j = 0
+      while (j < height) {
+
+
 
         j = j + 1
       }
       i = i + 1
-    }
+    }*/
   }
 
 

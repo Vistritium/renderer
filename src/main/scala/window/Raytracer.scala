@@ -1,7 +1,12 @@
 package window
 
+import java.nio.file.{Files, Paths, StandardOpenOption}
+import javafx.embed.swing.SwingFXUtils
 import javafx.scene.canvas.GraphicsContext
+import javafx.scene.image.WritableImage
+import javax.imageio.ImageIO
 
+import com.typesafe.config.ConfigFactory
 import common.Config
 import raytracer._
 import struct._
@@ -12,9 +17,11 @@ import scalafx.scene.canvas.Canvas
 import scalafx.scene.{Group, Scene}
 
 object Raytracer extends JFXApp {
-  val width = 800
-  val height = 800
 
+  val conf = ConfigFactory.parseResources("raytracer.conf")
+
+  val width = conf.getInt("width")
+  val height = conf.getInt("height")
 
   val canvas = new Canvas(width, height)
   implicit val graphicsContext: GraphicsContext = canvas.getGraphicsContext2D
@@ -26,8 +33,22 @@ object Raytracer extends JFXApp {
     new ColoredSphere(new Vector3(0.4f, 0, 1.1f), 0.3f, Color(255, 0, 0)),
     ColoredPlane(new Vector3(0, 0, -1), 2, Color(0, 255, 0)))
 
-  val camera = new OrthographicCamera(Vector3(0f, 0f, 0f), Vector3(0, 0, 1).normalised, width, height)
-  //val camera = new PerspectiveCamera(Vector3(0f, 0f, 0f), Vector3(0, 0, 1).normalised, 0.7f, width, height)
+  val cameraPos = new Vector3(conf.getDouble("camera.pos.x").toFloat, conf.getDouble("camera.pos.y").toFloat, conf.getDouble("camera.pos.z").toFloat)
+  val cameraTarget = new Vector3(conf.getDouble("camera.target.x").toFloat, conf.getDouble("camera.target.y").toFloat, conf.getDouble("camera.target.z").toFloat)
+
+
+  val antyaliasing = if (classOf[RegularAntyaliasing].getSimpleName.equalsIgnoreCase(conf.getString("camera.antyaliasing"))) {
+    new RegularAntyaliasing(conf.getInt(s"${classOf[RegularAntyaliasing].getSimpleName}.raysPerPixelSquared"))
+  } else {
+    NoAntyaliasing
+  }
+
+  val camera = if (classOf[OrthographicCamera].getSimpleName.equalsIgnoreCase(conf.getString("camera.type"))) {
+    new OrthographicCamera(cameraPos, cameraTarget, width, height, antyaliasing)
+  } else {
+    new PerspectiveCamera(cameraPos, cameraTarget, conf.getDouble(s"${classOf[PerspectiveCamera].getSimpleName}.centerDistance").toFloat, width, height, antyaliasing)
+  }
+  //val camera =
 
   val group = new Group(canvas)
 
@@ -42,13 +63,17 @@ object Raytracer extends JFXApp {
       looped()
 
       try {
-        //val wim = new WritableImage(Config.width, Config.height)
-        //canvas.snapshot(null, wim)
+        val wim = new WritableImage(Raytracer.this.width, Raytracer.this.height)
+        canvas.snapshot(null, wim)
 
-        //val xImage = SwingFXUtils.fromFXImage(wim, null)
-        //ImageIO.write(xImage, "png", Files.newOutputStream(Paths.get(Config().getString("saveRenderPath") + "render.png"), StandardOpenOption.CREATE))
+        val xImage = SwingFXUtils.fromFXImage(wim, null)
+        val fileOutputStream = Files.newOutputStream(Paths.get(Config().getString("saveRenderPath") + "render.png"), StandardOpenOption.CREATE)
+        ImageIO.write(xImage, "png", fileOutputStream)
+        fileOutputStream.close()
+
+
       } catch {
-        case e: Exception =>
+        case e: Exception => println(e.getMessage)
       }
 
     })
@@ -58,7 +83,7 @@ object Raytracer extends JFXApp {
   //noinspection ZeroIndexToHead
   def looped(): Unit = {
 
-      camera.render(world)
+    camera.render(world)
 
 
 

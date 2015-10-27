@@ -9,3 +9,9 @@ trait Antyaliasing {
 
 
 }
+
+object NoAntyaliasing extends Antyaliasing {
+  override val getCoords: List[Vector2] = List(new Vector2(0, 0))
+
+  override def computeColor(x: List[(Vector2, Color)]): Color = x.head._2
+}
