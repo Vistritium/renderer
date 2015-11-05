@@ -21,15 +21,15 @@ class ColoredTriangle protected(val a: Vector3, val b: Vector3, val c: Vector3, 
       val fc = c - hitPoint
 
       val facrossfb = fa cross fb
-      if ((facrossfb dot -trianglesPlane.normal) < ColoredTriangle.MINUS_ZERO) {
+      if ((facrossfb dot -trianglesPlane.normal) < ColoredTriangle.PLUS_ZERO) {
         noHit
       } else {
         val fbcrossfc = fb cross fc
-        if ((fbcrossfc dot -trianglesPlane.normal) < ColoredTriangle.MINUS_ZERO) {
+        if ((fbcrossfc dot -trianglesPlane.normal) < ColoredTriangle.PLUS_ZERO) {
           noHit
         } else {
           val fccrossfa = fc cross fa
-          if ((fccrossfa dot -trianglesPlane.normal) < ColoredTriangle.MINUS_ZERO) {
+          if ((fccrossfa dot -trianglesPlane.normal) < ColoredTriangle.PLUS_ZERO) {
             noHit
           } else {
             hit(rayHit.hit.get)

@@ -44,6 +44,10 @@ trait Camera {
     val index = x + y * width
     val index3 = index * 3
 
+    if(x > 510 && y > 510){
+      System.nanoTime()
+    }
+
     buffer.update(index3, color.redByte)
     buffer.update(index3 + 1, color.greenByte)
     buffer.update(index3 + 2, color.blueByte)
