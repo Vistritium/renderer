@@ -3,8 +3,9 @@ package raytracer
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.image.{PixelFormat, PixelWriter}
 
+import raytracer.Light
 import renderer.RgbUtils
-import struct.{Vector3, Color}
+import struct.{Color, Vector3}
 
 trait Camera {
 
@@ -18,6 +19,8 @@ trait Camera {
 
   val pixelWidth = boxWidth / width
   val pixelHeight = boxWidth / height
+
+  val light: Option[Light]
 
 
   protected var buffer: Array[Byte] = Array.fill[Byte](width * height * 3)(0x0)
@@ -38,13 +41,21 @@ trait Camera {
     println(s"Rendering time: ${(endingTime - beginingTime) / 1000000000.0} seconds")
   }
 
+  def getColorForRayhit(rayHit: RayHit, world: World): Color = {
+    light match {
+      case None => rayHit.hitObj.asInstanceOf[ColoredTriangle].color(rayHit.hit.get) + rayHit.hitObj.asInstanceOf[ColoredTriangle].material.ambient
+      case Some(x) => if(x.isInShadow(rayHit)(this, world)) rayHit.hitObj.asInstanceOf[ColoredTriangle].material.ambient else x.getColor(rayHit)(this)
+    }
+
+  }
+
   protected def draw(world: World)
 
   protected def putPixel(x: Int, y: Int, color: Color) = {
     val index = x + y * width
     val index3 = index * 3
 
-    if(x > 510 && y > 510){
+    if (x > 510 && y > 510) {
       System.nanoTime()
     }
 

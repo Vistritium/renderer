@@ -2,7 +2,8 @@ package raytracer
 
 import struct.{Color, FloatUtils, Ray, Vector3}
 
-class OrthographicCamera(override var position: Vector3, override var target: Vector3, override var width: Int, override var height: Int, antyaliasing: Antyaliasing = new RegularAntyaliasing(2)) extends Camera {
+class OrthographicCamera(override var position: Vector3, override var target: Vector3, override var width: Int,
+                         override var height: Int, antyaliasing: Antyaliasing = new RegularAntyaliasing(2), override val light: Option[Light] = None) extends Camera {
   val direction = (target - position).normalised
 
   override protected def draw(world: World): Unit = {
@@ -26,7 +27,8 @@ class OrthographicCamera(override var position: Vector3, override var target: Ve
         val currRayOrigin = rayOrigin + cameraUSinglePixel * 0.5f * coord.x + cameraVSinglePixel * 0.5f * coord.y
         val currRay = Ray(currRayOrigin, ray.direction)
         val hit = world.intersects(currRay)
-        hit.hit.map(x => (coord, hit.hitObj.asInstanceOf[Colored].color))
+
+        hit.hit.map(x => (coord, getColorForRayhit(hit, world)))
       })
 
       if (colors.nonEmpty) {

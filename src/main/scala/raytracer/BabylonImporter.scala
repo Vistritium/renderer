@@ -103,7 +103,10 @@ object BabylonImporter {
         val b = verticles(face.b)
         val c = verticles(face.c)
 
-        ColoredTriangle(a.coordinates, b.coordinates, c.coordinates, Color(random.nextInt(200)+50, 0, random.nextInt(200)+50), a.normal, b.normal, c.normal)
+        val material = new Material(Color(10, 10, 10), Color(100, 100, 100), Color(255, 255, 255), None)
+
+        //ColoredTriangle(a.coordinates, b.coordinates, c.coordinates, Color(random.nextInt(200)+50, 0, random.nextInt(200)+50), a.normal, b.normal, c.normal)
+        ColoredTriangle(a.coordinates, b.coordinates, c.coordinates, material, a.normal, b.normal, c.normal)
       })
 
 

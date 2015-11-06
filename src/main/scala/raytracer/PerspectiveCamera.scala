@@ -3,7 +3,8 @@ package raytracer
 import common.ProgressCounter
 import struct.{Color, FloatUtils, Ray, Vector3}
 
-class PerspectiveCamera(override var position: Vector3, override var target: Vector3, centerDistance: Float, override var width: Int, override var height: Int, antyaliasing: Antyaliasing = new RegularAntyaliasing(4)) extends Camera {
+class PerspectiveCamera(override var position: Vector3, override var target: Vector3, centerDistance: Float, override var width: Int,
+                        override var height: Int, antyaliasing: Antyaliasing = new RegularAntyaliasing(4), override val light: Option[Light] = None) extends Camera {
   val direction = (target - position).normalised
 
   override protected def draw(world: World): Unit = {
@@ -29,7 +30,7 @@ class PerspectiveCamera(override var position: Vector3, override var target: Vec
         val currRayOrigin = middlePoint + cameraUSinglePixel * 0.5f * coord.x + cameraVSinglePixel * 0.5f * coord.y
         val currRay = Ray(position, (currRayOrigin - position).normalised)
         val hit = world.intersects(currRay)
-        hit.hit.map(x => (coord, hit.hitObj.asInstanceOf[Colored].color))
+        hit.hit.map(x => (coord, getColorForRayhit(hit, world)))
       })
 
       if (colors.nonEmpty) {

@@ -20,7 +20,7 @@ class ColoredPlane private(override val normal: Vector3, override val w: Float, 
 
       new ColoredPlane(min, max)
   }*/
-
+  override def color(vector: Vector3): Color = color
 }
 
 object ColoredPlane {

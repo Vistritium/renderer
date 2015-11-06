@@ -1,15 +1,15 @@
 package raytracer
 
-import struct.Color
+import struct.{Vector3, Color}
 
 trait Colored {
-    def color: Color
+    def color(vector: Vector3): Color
 }
 
 object Colored {
 
-  def apply(color: Color): Colored = new Colored {
-    override val color: Color = color
+  def apply(globalColor: Color): Colored = new Colored {
+    override def color(vector: Vector3 = Vector3.zero): Color = globalColor
   }
 
 }

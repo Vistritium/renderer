@@ -12,6 +12,7 @@ import raytracer._
 import struct._
 import window.RendererApp._
 
+import scala.collection.mutable.ArrayBuffer
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.canvas.Canvas
@@ -21,7 +22,7 @@ object Raytracer extends JFXApp {
 
   val conf = ConfigFactory.parseResources("raytracer.conf")
 
-  val model = BabylonImporter.importModel(getClass.getClassLoader.getResourceAsStream("models/monkey.babylon"))
+  val model = BabylonImporter.importModel(getClass.getClassLoader.getResourceAsStream("models/onlyMonkey.babylon"))
 
   val width = conf.getInt("width")
   val height = conf.getInt("height")
@@ -43,11 +44,13 @@ object Raytracer extends JFXApp {
     ColoredPlane.fromPoints(new Vector3(0, 2, 3), new Vector3(2, 0, 3), new Vector3(0, 0, 3), Color(0, 255, 0))
   )*/
 
-  val world = World.fromMeshes(model:_*)
+  val material = new Material(Color(10, 10, 10), Color(100, 100, 100), Color(255, 255, 255), None)
+  val mesh: raytracer.Mesh = new raytracer.Mesh(ArrayBuffer(ColoredTriangle(new Vector3(-100f, -1, -100f), new Vector3(100, -1, -100), new Vector3(0, -1, 100), material)))
+  val world = World.fromMeshes(mesh :: model.toList:_*)
 
   val cameraPos = new Vector3(conf.getDouble("camera.pos.x").toFloat, conf.getDouble("camera.pos.y").toFloat, conf.getDouble("camera.pos.z").toFloat)
   val cameraTarget = new Vector3(conf.getDouble("camera.target.x").toFloat, conf.getDouble("camera.target.y").toFloat, conf.getDouble("camera.target.z").toFloat)
-
+  val light = new PointLight(Vector3(10, 10f, -7f))
 
   val antyaliasing = if (classOf[RegularAntyaliasing].getSimpleName.equalsIgnoreCase(conf.getString("camera.antyaliasing"))) {
     new RegularAntyaliasing(conf.getInt(s"${classOf[RegularAntyaliasing].getSimpleName}.raysPerPixelSquared"))
@@ -56,9 +59,9 @@ object Raytracer extends JFXApp {
   }
 
   val camera = if (classOf[OrthographicCamera].getSimpleName.equalsIgnoreCase(conf.getString("camera.type"))) {
-    new OrthographicCamera(cameraPos, cameraTarget, width, height, antyaliasing)
+    new OrthographicCamera(cameraPos, cameraTarget, width, height, antyaliasing, Some(light))
   } else {
-    new PerspectiveCamera(cameraPos, cameraTarget, conf.getDouble(s"${classOf[PerspectiveCamera].getSimpleName}.centerDistance").toFloat, width, height, antyaliasing)
+    new PerspectiveCamera(cameraPos, cameraTarget, conf.getDouble(s"${classOf[PerspectiveCamera].getSimpleName}.centerDistance").toFloat, width, height, antyaliasing, Some(light))
   }
   //val camera =
 

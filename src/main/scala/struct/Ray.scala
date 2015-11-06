@@ -66,6 +66,6 @@ class Ray private(val origin: Vector3, val direction: Vector3, val length: Float
 
 object Ray {
   def apply(origin: Vector3, direction: Vector3, length: Float = 0.0f) = {
-    new Ray(origin, direction, if (length != 0.0f) length else Float.MaxValue)
+    new Ray(origin, direction.normalised, if (length != 0.0f) length else Float.MaxValue)
   }
 }

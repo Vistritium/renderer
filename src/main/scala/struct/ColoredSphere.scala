@@ -16,5 +16,6 @@ class ColoredSphere(override val min: Vector3, override val max: Vector3, val co
     new ColoredSphere(projectedMin, projectedMax, color)
   }
 
+  override def color(vector: Vector3): Color = color
 }
 

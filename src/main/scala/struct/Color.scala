@@ -16,7 +16,15 @@ class Color private(val red: Int, val green: Int, val blue: Int) {
     val newGreen = (green.toFloat * multiplier).toInt
     val newBlue = (green.toFloat * multiplier).toInt
 
-    Color(Color.clampColor(newRed).toInt, Color.clampColor(newGreen).toInt, Color.clampColor(newBlue).toInt)
+    Color(Color.clampColor(newRed), Color.clampColor(newGreen), Color.clampColor(newBlue))
+  }
+
+  def +(other: Color): Color = {
+    val newRed = Color.clampColor(red + other.red)
+    val newGreen = Color.clampColor(green + other.green)
+    val newblue = Color.clampColor(blue + other.blue)
+
+    Color(newRed, newGreen, newblue)
   }
 
   /*  println(redByte & 0xff)
@@ -33,5 +41,5 @@ object Color {
     FloatUtils.lerp(0f, 255f, red).toInt
   }
 
-  def clampColor(value: Int) = FloatUtils.clamp(value, 0, 255)
+  def clampColor(value: Int): Int = FloatUtils.clamp(value, 0, 255).toInt
 }
