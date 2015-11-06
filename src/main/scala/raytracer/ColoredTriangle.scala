@@ -1,8 +1,8 @@
 package raytracer
 
-import struct.{Color, Plane, Ray, Vector3}
+import struct._
 
-class ColoredTriangle protected(val a: Vector3, val b: Vector3, val c: Vector3, val material: Material, val na: Vector3 = Vector3.up, val nb: Vector3 = Vector3.up, val nc: Vector3 = Vector3.up) extends RayIntersectable with Colored {
+class ColoredTriangle protected(val a: Vector3, val b: Vector3, val c: Vector3, val material: Material, val na: Vector3 = Vector3.up, val nb: Vector3 = Vector3.up, val nc: Vector3 = Vector3.up, val texA: Vector2 = Vector2.zero, val texB: Vector2 = Vector2.zero, val texC: Vector2 = Vector2.zero) extends RayIntersectable with Colored {
   lazy val trianglesPlane = Plane.fromPoints(a, b, c)
 
   override def intersects(ray: Ray): RayHit = {
@@ -43,7 +43,7 @@ class ColoredTriangle protected(val a: Vector3, val b: Vector3, val c: Vector3, 
 
 object ColoredTriangle {
 
-  def apply(a: Vector3, b: Vector3, c: Vector3, material: Material, na: Vector3 = Vector3.up, nb: Vector3 = Vector3.up, nc: Vector3 = Vector3.up) = new ColoredTriangle(a, b, c, material, na, nb, nc)
+  def apply(a: Vector3, b: Vector3, c: Vector3, material: Material, na: Vector3 = Vector3.up, nb: Vector3 = Vector3.up, nc: Vector3 = Vector3.up, texA: Vector2 = Vector2.zero, texB: Vector2 = Vector2.zero, texC: Vector2 = Vector2.zero) = new ColoredTriangle(a, b, c, material, na, nb, nc, texA, texB, texC)
 
   val PLUS_ZERO = 0.00001f
   val MINUS_ZERO = -0.0001f

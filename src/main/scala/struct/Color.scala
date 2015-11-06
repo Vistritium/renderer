@@ -1,7 +1,5 @@
 package struct
 
-import raytracer.Colored
-
 class Color private(val red: Int, val green: Int, val blue: Int) {
   require(red >= 0 && red <= 255, s"Red component is out of range: $red")
   require(green >= 0 && green <= 255, s"Green component is out of range: $green")
@@ -11,10 +9,22 @@ class Color private(val red: Int, val green: Int, val blue: Int) {
   val greenByte: Byte = (green & 0xFF).toByte
   val blueByte: Byte = (blue & 0xFF).toByte
 
+  def redFloat = red.toFloat / 255f
+  def greenFloat = green.toFloat / 255f
+  def blueFloat = blue.toFloat / 255f
+
   def *(multiplier: Float): Color = {
     val newRed = (red.toFloat * multiplier).toInt
     val newGreen = (green.toFloat * multiplier).toInt
     val newBlue = (green.toFloat * multiplier).toInt
+
+    Color(Color.clampColor(newRed), Color.clampColor(newGreen), Color.clampColor(newBlue))
+  }
+
+  def *(other: Color): Color = {
+    val newRed = (redFloat * other.redFloat) * 255f
+    val newGreen = (greenFloat * other.greenFloat) * 255f
+    val newBlue = (blueFloat * other.blueFloat) * 255f
 
     Color(Color.clampColor(newRed), Color.clampColor(newGreen), Color.clampColor(newBlue))
   }
@@ -42,4 +52,8 @@ object Color {
   }
 
   def clampColor(value: Int): Int = FloatUtils.clamp(value, 0, 255).toInt
+
+  def clampColor(value: Float): Int = FloatUtils.clamp(value, 0, 255).toInt
+
+  def white = Color(255, 255, 255)
 }

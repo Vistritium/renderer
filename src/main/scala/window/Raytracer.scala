@@ -22,7 +22,7 @@ object Raytracer extends JFXApp {
 
   val conf = ConfigFactory.parseResources("raytracer.conf")
 
-  val model = BabylonImporter.importModel(getClass.getClassLoader.getResourceAsStream("models/onlyMonkey.babylon"))
+  val model = BabylonImporter.importModel(getClass.getClassLoader.getResourceAsStream("models/monkeyTextured.babylon"), "models")
 
   val width = conf.getInt("width")
   val height = conf.getInt("height")
@@ -46,7 +46,7 @@ object Raytracer extends JFXApp {
 
   val material = new Material(Color(10, 10, 10), Color(100, 100, 100), Color(255, 255, 255), None)
   val mesh: raytracer.Mesh = new raytracer.Mesh(ArrayBuffer(ColoredTriangle(new Vector3(-100f, -1, -100f), new Vector3(100, -1, -100), new Vector3(0, -1, 100), material)))
-  val world = World.fromMeshes(mesh :: model.toList:_*)
+  val world = World.fromMeshes((mesh :: model.toList.reverse):_*)
 
   val cameraPos = new Vector3(conf.getDouble("camera.pos.x").toFloat, conf.getDouble("camera.pos.y").toFloat, conf.getDouble("camera.pos.z").toFloat)
   val cameraTarget = new Vector3(conf.getDouble("camera.target.x").toFloat, conf.getDouble("camera.target.y").toFloat, conf.getDouble("camera.target.z").toFloat)
