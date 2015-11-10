@@ -2,10 +2,9 @@ package raytracer
 
 import struct._
 
-class PointLight(val position: Vector3, lightDiffuse: Color = Color.white, lightAmbient: Color = Color.white, lightSpecular: Color = Color(255, 255, 255)) extends Light {
+class PointLight(val position: Vector3, val lightDiffuse: Color = Color.white, val lightAmbient: Color = Color.white, val lightSpecular: Color = Color(255, 255, 255)) extends Light {
 
-  override def getColor(rayHit: RayHit)(implicit camera: Camera): Color = {
-
+  override def getDiffuseAmbientSpecular(rayHit: RayHit)(implicit camera: Camera): (Color, Color, Color) = {
 
     val hitPosition = rayHit.hit.get
     val hitTriangle = rayHit.hitObj.asInstanceOf[ColoredTriangle]
@@ -16,31 +15,34 @@ class PointLight(val position: Vector3, lightDiffuse: Color = Color.white, light
 
     //val cameraPos = camera.position
 
-    val objColor = {
+    val (objDiff, objAmbient) = {
       rayHit.hitObj.asInstanceOf[ColoredTriangle].material.texture match {
-        case None => rayHit.hitObj.asInstanceOf[ColoredTriangle].material.diffuse
+        case None => (rayHit.hitObj.asInstanceOf[ColoredTriangle].material.diffuse, rayHit.hitObj.asInstanceOf[ColoredTriangle].material.ambient)
         case Some(img) => {
           val b = try{
             img.getRGB((texUv.x * (img.getWidth - 1)).toInt, (texUv.y * (img.getHeight - 1)).toInt)
           } catch {
             case x: ArrayIndexOutOfBoundsException => {
-
               throw x
             }
           }
-
-          Color((b & 0x00ff0000) >> 16, (b & 0x0000ff00) >> 8, (b & 0x000000ff))
+          val ambient = rayHit.hitObj.asInstanceOf[ColoredTriangle].material.ambient
+          (Color((b & 0x00ff0000) >> 16, (b & 0x0000ff00) >> 8, (b & 0x000000ff)),
+            Color(
+              (((b & 0x00ff0000) >> 16) * ambient.redFloat).toInt,
+              (((b & 0x0000ff00) >> 8) * ambient.greenFloat).toInt,
+              ((b & 0x000000ff) * ambient.blueFloat).toInt)
+            )
         }
       }
 
     }
 
-    val diffColor = objColor * c
+    val diffColor = objDiff * c
     val specColor = getSpecular(rayHit, hitPointNormal, camera)
-    val ambient = rayHit.hitObj.asInstanceOf[ColoredTriangle].material.ambient
 
-    diffColor * lightDiffuse + specColor * lightSpecular + ambient * lightAmbient
 
+    (diffColor * lightDiffuse, objAmbient * lightAmbient, specColor * lightSpecular)
   }
 
   //http://answers.unity3d.com/questions/383804/calculate-uv-coordinates-of-3d-point-on-plane-of-m.html

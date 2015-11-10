@@ -22,7 +22,8 @@ object Raytracer extends JFXApp {
 
   val conf = ConfigFactory.parseResources("raytracer.conf")
 
-  val model = BabylonImporter.importModel(getClass.getClassLoader.getResourceAsStream("models/monkeyTextured.babylon"), "models")
+  val modelToImportStr = conf.getString("import.model")
+  val model = BabylonImporter.importModel(getClass.getClassLoader.getResourceAsStream(s"models/$modelToImportStr.babylon"), "models")
 
   val width = conf.getInt("width")
   val height = conf.getInt("height")

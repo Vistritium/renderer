@@ -5,6 +5,7 @@ import javax.imageio.ImageIO
 
 import org.json.simple.{JSONArray, JSONObject, JSONValue}
 import struct._
+import window.Raytracer
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable
@@ -16,6 +17,9 @@ object BabylonImporter {
   def importModel(inputStream: InputStream, texturesPath: String): ArrayBuffer[Mesh] = {
 
     val random = new Random(578295708257210858l)
+
+    val invertV = Raytracer.conf.getBoolean("import.invertV")
+    val invertU = Raytracer.conf.getBoolean("import.invertU")
 
     val reader = new InputStreamReader(inputStream);
 
@@ -135,8 +139,17 @@ object BabylonImporter {
           val projectedNormal = Vector3.transformCoordinates(normal, worldProjection)
 
           val uv = if(uvCount > 0){
-            val u = verticesArray(i * verticesStep + 6)
-            val v = verticesArray(i * verticesStep + 7)
+            val u =  if(invertU){
+              1f - verticesArray(i * verticesStep + 6)
+            } else {
+              verticesArray(i * verticesStep + 6)
+            }
+            val v = if(invertV){
+              1f - verticesArray(i * verticesStep + 7)
+            } else {
+              verticesArray(i * verticesStep + 7)
+            }
+
             Vector2(u, v)
           } else {
             Vector2.zero

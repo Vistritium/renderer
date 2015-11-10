@@ -44,7 +44,11 @@ trait Camera {
   def getColorForRayhit(rayHit: RayHit, world: World): Color = {
     light match {
       case None => rayHit.hitObj.asInstanceOf[ColoredTriangle].color(rayHit.hit.get) + rayHit.hitObj.asInstanceOf[ColoredTriangle].material.ambient
-      case Some(x) => if(x.isInShadow(rayHit)(this, world)) rayHit.hitObj.asInstanceOf[ColoredTriangle].material.ambient else x.getColor(rayHit)(this)
+      case Some(x) => {
+        val isInShadow = x.isInShadow(rayHit)(this, world)
+        val (diff, ambient, spec) = x.getDiffuseAmbientSpecular(rayHit)(this)
+        if(isInShadow) ambient else diff + spec + ambient
+      }
     }
 
   }
