@@ -9,8 +9,6 @@ class PerspectiveCamera(override var position: Vector3, override var target: Vec
 
   override protected def draw(world: World): Unit = {
 
-
-
     val e = position + direction * centerDistance
 
     val cameraW = direction.normalised

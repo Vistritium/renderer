@@ -1,6 +1,8 @@
 package raytracer
 
+import common.ProgressCounter
 import struct.{Color, FloatUtils, Ray, Vector3}
+
 
 class OrthographicCamera(override var position: Vector3, override var target: Vector3, override var width: Int,
                          override var height: Int, antyaliasing: Antyaliasing = new RegularAntyaliasing(2), override val light: Option[Light] = None) extends Camera {
@@ -42,8 +44,9 @@ class OrthographicCamera(override var position: Vector3, override var target: Ve
 
     }
 
+    val progress = new ProgressCounter(width * height)
     (0 until width).par.foreach(i => {
-      (0 until height).par.foreach(j => {
+      (0 until height).foreach(j => {
         val iFactor = FloatUtils.lerp(-1f, 1f, i.toFloat / width)
         val jFactor = FloatUtils.lerp(-1f, 1f, j.toFloat / height)
 
@@ -56,6 +59,7 @@ class OrthographicCamera(override var position: Vector3, override var target: Ve
         if (color.isDefined) {
           putPixel(i, j, color.get)
         }
+        progress.bumpAndMaybePrintProgress()
       })
     })
 
