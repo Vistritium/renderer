@@ -21,6 +21,8 @@ class ColoredPlane private(override val normal: Vector3, override val w: Float, 
       new ColoredPlane(min, max)
   }*/
   override def color(vector: Vector3): Color = color
+
+  override def diffuseAmbientSpecularNormal(hit: Vector3): (Color, Color, Color, Vector3) = (color, color * 0.3f, Color.black, normal.normalised)
 }
 
 object ColoredPlane {

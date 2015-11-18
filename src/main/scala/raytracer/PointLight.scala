@@ -1,17 +1,30 @@
 package raytracer
 
 import struct._
+import window.Raytracer
 
-class PointLight(val position: Vector3, val lightDiffuse: Color = Color.white, val lightAmbient: Color = Color.white, val lightSpecular: Color = Color(255, 255, 255)) extends Light {
+class PointLight(val position: Vector3, val lightDiffuse: Color = Color(255, 0, 0), val lightAmbient: Color = Color.white,
+                 val lightSpecular: Color = Color(255, 255, 255)) extends Light {
 
-  override def getDiffuseAmbientSpecular(rayHit: RayHit)(implicit camera: Camera): (Color, Color, Color) = {
+  val shiness: Double = Raytracer.conf.getDouble("PointLight.shiness")
+
+  override def getDiffuseAmbientSpecular(rayHit: RayHit, hitNormal: Vector3)(implicit camera: Camera): (Color, Color, Color) = {
+    val c = Light.computeNDotL(rayHit.hit.get, hitNormal, position)
+
+    val diffColor = lightDiffuse * c
+    val specColor = getSpecular(rayHit, hitNormal, camera)
+
+    (diffColor, specColor, lightAmbient)
+  }
+
+/*  override def getDiffuseAmbientSpecular(rayHit: RayHit)(implicit camera: Camera): (Color, Color, Color) = {
 
     val hitPosition = rayHit.hit.get
     val hitTriangle = rayHit.hitObj.asInstanceOf[ColoredTriangle]
 
     val (hitPointNormal, texUv) = barycentricInterpolation(hitTriangle.a, hitTriangle.b, hitTriangle.c, hitTriangle.na, hitTriangle.nb, hitTriangle.nc, hitPosition, hitTriangle.texA, hitTriangle.texB, hitTriangle.texC)
 
-    val c = computeNDotL(hitPosition, hitPointNormal, position)
+    val c = Light.computeNDotL(hitPosition, hitPointNormal, position)
 
     //val cameraPos = camera.position
 
@@ -27,7 +40,7 @@ class PointLight(val position: Vector3, val lightDiffuse: Color = Color.white, v
             }
           }
           val ambient = rayHit.hitObj.asInstanceOf[ColoredTriangle].material.ambient
-          (Color((b & 0x00ff0000) >> 16, (b & 0x0000ff00) >> 8, (b & 0x000000ff)),
+          (Color((b & 0x00ff0000) >> 16, (b & 0x0000ff00) >> 8, b & 0x000000ff),
             Color(
               (((b & 0x00ff0000) >> 16) * ambient.redFloat).toInt,
               (((b & 0x0000ff00) >> 8) * ambient.greenFloat).toInt,
@@ -35,7 +48,6 @@ class PointLight(val position: Vector3, val lightDiffuse: Color = Color.white, v
             )
         }
       }
-
     }
 
     val diffColor = objDiff * c
@@ -43,7 +55,7 @@ class PointLight(val position: Vector3, val lightDiffuse: Color = Color.white, v
 
 
     (diffColor * lightDiffuse, objAmbient * lightAmbient, specColor * lightSpecular)
-  }
+  }*/
 
   //http://answers.unity3d.com/questions/383804/calculate-uv-coordinates-of-3d-point-on-plane-of-m.html
   def barycentricInterpolation(p1: Vector3, p2: Vector3, p3: Vector3, uv1: Vector3, uv2: Vector3, uv3: Vector3, f: Vector3, texUv1: Vector2, texUv2: Vector2, texUv3: Vector2): (Vector3, Vector2) = {
@@ -66,14 +78,7 @@ class PointLight(val position: Vector3, val lightDiffuse: Color = Color.white, v
   }
 
 
-  def computeNDotL(vertex: Vector3, normal: Vector3, lightPosition: Vector3): Float = {
-    val lightDirection = lightPosition - vertex
 
-    val normalized = normal.normalised
-    val lightDirNormalized = lightDirection.normalised
-
-    Math.max(0, normalized dot lightDirNormalized)
-  }
 
   def getSpecular(rayHit: RayHit, hitPointNormal: Vector3, camera: Camera): Color = {
 
@@ -85,9 +90,9 @@ class PointLight(val position: Vector3, val lightDiffuse: Color = Color.white, v
 
     val NdotH = n dot h
 
-    val intensity = Math.pow(Math.max(NdotH, 0).toFloat, 16f ).toFloat
+    val intensity = Math.pow(Math.max(NdotH, 0).toFloat, shiness ).toFloat
 
-    rayHit.hitObj.asInstanceOf[ColoredTriangle].material.specular * intensity
+    lightSpecular * intensity
 
   }
 

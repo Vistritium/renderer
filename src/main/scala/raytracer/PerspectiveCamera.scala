@@ -4,7 +4,7 @@ import common.ProgressCounter
 import struct.{Color, FloatUtils, Ray, Vector3}
 
 class PerspectiveCamera(override var position: Vector3, override var target: Vector3, centerDistance: Float, override var width: Int,
-                        override var height: Int, antyaliasing: Antyaliasing = new RegularAntyaliasing(4), override val light: Option[Light] = None) extends Camera {
+                        override var height: Int, antyaliasing: Antyaliasing = new RegularAntyaliasing(4), override val lights: List[Light] = List()) extends Camera {
   val direction = (target - position).normalised
 
   override protected def draw(world: World): Unit = {

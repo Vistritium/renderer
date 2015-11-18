@@ -16,7 +16,7 @@ class Color private(val red: Int, val green: Int, val blue: Int) {
   def *(multiplier: Float): Color = {
     val newRed = (red.toFloat * multiplier).toInt
     val newGreen = (green.toFloat * multiplier).toInt
-    val newBlue = (green.toFloat * multiplier).toInt
+    val newBlue = (blue.toFloat * multiplier).toInt
 
     Color(Color.clampColor(newRed), Color.clampColor(newGreen), Color.clampColor(newBlue))
   }
@@ -56,4 +56,6 @@ object Color {
   def clampColor(value: Float): Int = FloatUtils.clamp(value, 0, 255).toInt
 
   def white = Color(255, 255, 255)
+
+  def black = Color(0, 0, 0)
 }

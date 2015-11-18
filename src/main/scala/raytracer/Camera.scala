@@ -3,7 +3,6 @@ package raytracer
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.image.{PixelFormat, PixelWriter}
 
-import raytracer.Light
 import renderer.RgbUtils
 import struct.{Color, Vector3}
 
@@ -20,8 +19,7 @@ trait Camera {
   val pixelWidth = boxWidth / width
   val pixelHeight = boxWidth / height
 
-  val light: Option[Light]
-
+  val lights: List[Light]
 
   protected var buffer: Array[Byte] = Array.fill[Byte](width * height * 3)(0x0)
   var clearColor: Color = Color.apply(0, 0, 0)
@@ -42,12 +40,30 @@ trait Camera {
   }
 
   def getColorForRayhit(rayHit: RayHit, world: World): Color = {
-    light match {
-      case None => rayHit.hitObj.asInstanceOf[ColoredTriangle].color(rayHit.hit.get) + rayHit.hitObj.asInstanceOf[ColoredTriangle].material.ambient
-      case Some(x) => {
-        val isInShadow = x.isInShadow(rayHit)(this, world)
-        val (diff, ambient, spec) = x.getDiffuseAmbientSpecular(rayHit)(this)
-        if(isInShadow) ambient else diff + spec + ambient
+    val (objDiff, objAmbient, objSpec, hitPointNormal) = rayHit.hitObj.asInstanceOf[Colored].diffuseAmbientSpecularNormal(rayHit.hit.get)
+    lights match {
+      case Nil => {
+        objDiff
+      } //rayHit.hitObj.asInstanceOf[ColoredTriangle].color(rayHit.hit.get) + rayHit.hitObj.asInstanceOf[ColoredTriangle].material.ambient
+      case x => {
+
+        val eachLightColors = x.map(light => {
+          val isInShadow = light.isInShadow(rayHit)(this, world)
+
+          val (lightDiff, lightSpec, lightAmbient) = light.getDiffuseAmbientSpecular(rayHit, hitPointNormal)(this)
+
+          if (isInShadow) {
+            (Color.black, lightAmbient * objAmbient, Color.black)
+          } else {
+            (lightDiff * objDiff, lightSpec * objSpec, lightAmbient * objAmbient)
+          }
+        })
+
+        val combined = eachLightColors.reduce((left, right) => {
+          (left._1 + right._1, left._2 + right._2, left._3 + right._3)
+        })
+
+        combined._1 + combined._2 + combined._3
       }
     }
 

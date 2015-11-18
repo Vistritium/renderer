@@ -17,5 +17,7 @@ class ColoredSphere(override val min: Vector3, override val max: Vector3, val co
   }
 
   override def color(vector: Vector3): Color = color
+
+  override def diffuseAmbientSpecularNormal(hit: Vector3): (Color, Color, Color, Vector3) = (color, color * 0.3f, Color.black, (hit - center).normalised)
 }
 

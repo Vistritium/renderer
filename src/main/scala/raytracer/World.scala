@@ -1,6 +1,6 @@
 package raytracer
 
-import struct.{Ray, Sphere}
+import struct.Ray
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -29,19 +29,38 @@ class World extends RayIntersectable {
 
 object World {
 
-  def apply(spheres: RayIntersectable with Colored *): World = {
+  def apply(spheres: RayIntersectable with Colored*): World = {
     val world = new World()
     world.objects ++= spheres
 
     world
   }
 
-  def fromMeshes(mesh: Mesh *): World = {
+  def fromMeshes(mesh: Mesh*): World = {
     val world = new World()
     val triangles = mesh.flatMap(_.faces)
     world.objects ++= triangles
 
     world
+  }
+
+  def fromObjects(obj: RayIntersectable with Colored *) = {
+    val world = new World()
+    world.objects ++= obj
+    world
+  }
+
+  def fromObjectsAndMeshes(objs: List[RayIntersectable with Colored], meshes: List[Mesh]) = {
+    val world = new World()
+    val triangles = meshes.flatMap(_.faces)
+    world.objects ++= triangles
+    world.objects ++= objs
+
+    world
+  }
+
+  def meshesToObjs(mesh: List[Mesh]): List[RayIntersectable with Colored] = {
+    mesh.flatMap(_.faces)
   }
 
 }
