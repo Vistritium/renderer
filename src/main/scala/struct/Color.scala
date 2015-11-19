@@ -1,5 +1,7 @@
 package struct
 
+import raytracer.Material
+
 class Color private(val red: Int, val green: Int, val blue: Int) {
   require(red >= 0 && red <= 255, s"Red component is out of range: $red")
   require(green >= 0 && green <= 255, s"Green component is out of range: $green")
@@ -37,6 +39,10 @@ class Color private(val red: Int, val green: Int, val blue: Int) {
     Color(newRed, newGreen, newblue)
   }
 
+  def toMaterial(ambientFactor: Float, spec: Color): Material = {
+    new Material(this * ambientFactor, this, spec)
+  }
+
   /*  println(redByte & 0xff)
     println(greenByte & 0xff)
     println(blueByte & 0xff)*/
@@ -60,4 +66,6 @@ object Color {
   def black = Color(0, 0, 0)
 
   def fromInt(RGB: Int) = Color((RGB & 0x00ff0000) >> 16, (RGB & 0x0000ff00) >> 8, RGB & 0x000000ff)
+
+
 }

@@ -22,7 +22,7 @@ object Raytracer extends JFXApp {
 
   val conf = ConfigFactory.parseResources("raytracer.conf")
 
-  val mode = 3
+  val mode = 4
 
   val model: List[RayIntersectable with Colored] = mode match {
     case 1 => {
@@ -39,6 +39,10 @@ object Raytracer extends JFXApp {
       val texture = ImageIO.read(textureImageRes)
       val earthSphere = new ColoredSphere(new Vector3(0, 1, 0), 1f, new Material(Color(100, 100, 100), Color(255, 255, 255), Color(255, 255, 255), Some(texture)))
       List(earthSphere)
+    }
+    case 4 => {
+      val box = World.makeBox(new Vector3(0, 0, 0), 2f)
+      box
     }
   }
 
@@ -66,7 +70,7 @@ object Raytracer extends JFXApp {
 
   val material = new Material(Color(10, 10, 10), Color(100, 100, 100), Color(255, 255, 255), None)
   val floor = new raytracer.Mesh(ArrayBuffer(ColoredTriangle(new Vector3(-100f, -1, -100f), new Vector3(100, -1, -100), new Vector3(0, -1, 100), material)))
-  val world = World.fromObjects(model ::: World.meshesToObjs(List(floor)):_*)
+  val world = World.fromObjects(model /*::: World.meshesToObjs(List(floor))*/:_*)
 
   val cameraPos = new Vector3(conf.getDouble("camera.pos.x").toFloat, conf.getDouble("camera.pos.y").toFloat, conf.getDouble("camera.pos.z").toFloat)
   val cameraTarget = new Vector3(conf.getDouble("camera.target.x").toFloat, conf.getDouble("camera.target.y").toFloat, conf.getDouble("camera.target.z").toFloat)

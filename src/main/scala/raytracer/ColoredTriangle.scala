@@ -7,7 +7,7 @@ class ColoredTriangle protected(val a: Vector3, val b: Vector3, val c: Vector3, 
                                 val texB: Vector2 = Vector2.zero, val texC: Vector2 = Vector2.zero) extends RayIntersectable
 with Colored {
 
-  lazy val trianglesPlane = Plane.fromPoints(a, b, c)
+  val trianglesPlane = Plane.fromPoints(a, b, c)
 
   override def intersects(ray: Ray): RayHit = {
     def noHit = RayHit(None, ray, this)

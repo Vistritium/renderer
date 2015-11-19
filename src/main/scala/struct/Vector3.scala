@@ -93,6 +93,9 @@ object Vector3 {
 
   def up = new Vector3(0, 1, 0)
 
+  def forward = new Vector3(0, 0, 1)
+
+  def right = new Vector3(1, 0, 0)
   implicit def Tuple2FloatToVector3(v: (Float, Float, Float)): Vector3 = {
     new Vector3(v._1, v._2, v._3)
   }
