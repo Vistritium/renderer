@@ -41,8 +41,12 @@ object Raytracer extends JFXApp {
       List(earthSphere)
     }
     case 4 => {
-      val box = World.makeBox(new Vector3(0, 0, 0), 2f)
-      box
+      val length = 2f
+      val box = World.makeBox(new Vector3(0, 0, 0), length)
+      val sphereSize = 0.6f
+      val sphere1 = new ColoredSphere(new Vector3(-length*0.3f, -length + sphereSize, length*0.3f), sphereSize, new Material(Color(100, 100, 100), Color(255, 255, 255), Color(255, 255, 255), None))
+      val sphere2 = new ColoredSphere(new Vector3(length*0.3f, -length + sphereSize, -length*0.3f), sphereSize, new Material(Color(100, 100, 100), Color(255, 255, 255), Color(255, 255, 255), None))
+      sphere2 :: sphere1 :: box
     }
   }
 
