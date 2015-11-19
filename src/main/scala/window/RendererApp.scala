@@ -19,14 +19,11 @@ object RendererApp extends JFXApp {
   val width = Config().getInt("width")
   val height = Config().getInt("height")
 
-
   val canvas = new Canvas(width, height)
   val graphicsContext: GraphicsContext = canvas.getGraphicsContext2D
 
   val camera = Config.camera
-
   var renderer = new Renderer(width, height, graphicsContext)
-
 
   val meshes = BabylonImporter.importModel(getClass.getClassLoader.getResourceAsStream("models/monkey.babylon")) //ObjImporter.importObj(Paths.get(getClass.getClassLoader.getResource("models/monkey.obj").toURI))
 
@@ -58,7 +55,6 @@ object RendererApp extends JFXApp {
       } catch {
         case e: Exception =>
       }
-
     })
   }
 

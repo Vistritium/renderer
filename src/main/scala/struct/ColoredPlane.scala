@@ -1,6 +1,6 @@
 package struct
 
-import raytracer.Colored
+import raytracer.{Diffuse, MaterialType, Colored}
 
 class ColoredPlane private(override val normal: Vector3, override val w: Float, val color: Color) extends Plane(normal, w) with Colored {
 
@@ -23,6 +23,10 @@ class ColoredPlane private(override val normal: Vector3, override val w: Float, 
   override def color(vector: Vector3): Color = color
 
   override def diffuseAmbientSpecularNormal(hit: Vector3): (Color, Color, Color, Vector3) = (color, color * 0.3f, Color.black, normal.normalised)
+
+  override def getMaterialType: MaterialType = Diffuse
+
+  override def getNormal(hit: Vector3): Vector3 = ???
 }
 
 object ColoredPlane {

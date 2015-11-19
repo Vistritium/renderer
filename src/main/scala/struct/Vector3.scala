@@ -13,6 +13,12 @@ class Vector3(private var _x: Float, private var _y: Float, private var _z: Floa
     c
   }
 
+  def +(v: Vector3, coef: Float) = {
+    var c = Vector3(coef * x, coef * y, coef * z);
+    c += v;
+    c
+  }
+
   def +=(v: Vector3) = {
     this._x += v.x
     this._y += v.y

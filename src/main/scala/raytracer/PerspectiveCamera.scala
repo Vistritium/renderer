@@ -40,12 +40,8 @@ class PerspectiveCamera(override var position: Vector3, override var target: Vec
     }
 
     val progress = new ProgressCounter(width * height)
-    (0 until width).par.foreach(i => {
+    (0 until width).foreach(i => {
       (0 until height).foreach(j => {
-
-        if(j == 567 && i == 544){
-          System.nanoTime()
-        }
 
         val iFactor = FloatUtils.lerp(-1f, 1f, i.toFloat / width)
         val jFactor = FloatUtils.lerp(-1f, 1f, j.toFloat / height)

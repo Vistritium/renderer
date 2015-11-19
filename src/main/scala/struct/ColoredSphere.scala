@@ -1,6 +1,6 @@
 package struct
 
-import raytracer.{Colored, Material}
+import raytracer.{MaterialType, Colored, Material}
 
 class ColoredSphere(override val min: Vector3, override val max: Vector3, val material: Material) extends Sphere(min, max) with Colored {
 
@@ -56,5 +56,9 @@ class ColoredSphere(override val min: Vector3, override val max: Vector3, val ma
     }
 
   }
+
+  override def getMaterialType: MaterialType = material.materialType
+
+  override def getNormal(hit: Vector3): Vector3 = (hit - center).normalised
 }
 

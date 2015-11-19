@@ -10,8 +10,8 @@ with Colored {
   val trianglesPlane = Plane.fromPoints(a, b, c)
 
   override def intersects(ray: Ray): RayHit = {
-    def noHit = RayHit(None, ray, this)
-    def hit(hit: Vector3) = RayHit(Some(hit), ray, this)
+    def noHit = RayHit(None, ray, this, ray.iteration)
+    def hit(hit: Vector3) = RayHit(Some(hit), ray, this, ray.iteration)
 
     val rayHit = trianglesPlane.intersects(ray)
     if (rayHit.hit.isEmpty) {
@@ -93,6 +93,12 @@ with Colored {
     (uv, Vector2(FloatUtils.clamp(texUv.x), FloatUtils.clamp(texUv.y)))
   }
 
+  override def getMaterialType: MaterialType = material.materialType
+
+  override def getNormal(hit: Vector3): Vector3 = {
+    val (hitPointNormal, texUv) = barycentricInterpolation(this.a, this.b, this.c, this.na, this.nb, this.nc, hit, this.texA, this.texB, this.texC)
+    hitPointNormal
+  }
 }
 
 object ColoredTriangle {
