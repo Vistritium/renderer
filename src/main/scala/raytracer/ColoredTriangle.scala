@@ -60,12 +60,8 @@ with Colored {
             }
           }
           val ambient = material.ambient
-          (Color((b & 0x00ff0000) >> 16, (b & 0x0000ff00) >> 8, b & 0x000000ff),
-            Color(
-              (((b & 0x00ff0000) >> 16) * ambient.redFloat).toInt,
-              (((b & 0x0000ff00) >> 8) * ambient.greenFloat).toInt,
-              ((b & 0x000000ff) * ambient.blueFloat).toInt)
-            )
+          (Color.fromInt(b),
+            Color.fromInt(b) * ambient)
         }
       }
     }

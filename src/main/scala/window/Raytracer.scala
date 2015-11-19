@@ -22,7 +22,7 @@ object Raytracer extends JFXApp {
 
   val conf = ConfigFactory.parseResources("raytracer.conf")
 
-  val mode = 2
+  val mode = 3
 
   val model: List[RayIntersectable with Colored] = mode match {
     case 1 => {
@@ -31,8 +31,14 @@ object Raytracer extends JFXApp {
       World.meshesToObjs(model.toList)
     }
     case 2 => {
-      val sphere = new ColoredSphere(new Vector3(0, 1, 0), 1f, Color(255, 255, 255))
+      val sphere = new ColoredSphere(new Vector3(0, 1, 0), 1f, new Material(Color(30, 30, 30), Color(255, 255, 255), Color(255, 255, 255)))
       List(sphere)
+    }
+    case 3 => {
+      val textureImageRes = getClass.getClassLoader.getResource(s"models/earth_sphere.jpg")
+      val texture = ImageIO.read(textureImageRes)
+      val earthSphere = new ColoredSphere(new Vector3(0, 1, 0), 1f, new Material(Color(100, 100, 100), Color(255, 255, 255), Color(255, 255, 255), Some(texture)))
+      List(earthSphere)
     }
   }
 

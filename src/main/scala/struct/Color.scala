@@ -58,4 +58,6 @@ object Color {
   def white = Color(255, 255, 255)
 
   def black = Color(0, 0, 0)
+
+  def fromInt(RGB: Int) = Color((RGB & 0x00ff0000) >> 16, (RGB & 0x0000ff00) >> 8, RGB & 0x000000ff)
 }
